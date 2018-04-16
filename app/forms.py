@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired
 from flask_wtf.file import FileAllowed, FileRequired, FileField 
-from flask import Flask, render_template, flash, session, redirect, url_for
 from wtforms import TextAreaField, SelectField
 
 

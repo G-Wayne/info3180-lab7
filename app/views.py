@@ -30,7 +30,7 @@ def upload():
         filename = secure_filename(photo.filename)
         
         photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-        # flash("Photo was successfully added", "success")
+        #flash("Photo was successfully added", "success")
         return jsonify(filename = filename, description = description, message = "File Upload Successful" )
         
     return jsonify(errors=form_errors(form))
