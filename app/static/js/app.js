@@ -48,13 +48,22 @@ const Upload = Vue.component('upload-form', {
     template: `
     <div>
         <form @submit.prevent="uploadPhoto" id="uploadForm"  method="POST" enctype="multipart/form-data" >
+            <div v-if="flashMessage">
+                <div v-if="error" class="alert alert-danger">
+                    <li v-for="msg in message">{{ msg }}</li>
+                </div>
+            <div v-else class="alert alert-success" v-for="msg in message" v-text="msg"></div>
+    </div>
             <h1>Upload Form</h1>
             <label>Description:</label><br>
-            <textarea name = 'description'></textarea><br>
+            <div class="form-group">
+                <textarea class="form-control" name = "description"></textarea><br>
+            </div>
             <label>Photo Upload</label><br/>
             <input id="photo" type="file" name='photo'/><br> <br>
-            <input type="submit" value="Submit" class="btn btn-primary"/>
+            <button @click="flashMessage = true" type="submit" name="submit" class="btn btn-primary">Submit</button> 
        </form>
+       <br> 
     </div>
 
     `,
@@ -62,6 +71,9 @@ const Upload = Vue.component('upload-form', {
         uploadPhoto: function(){
             let uploadForm = document.getElementById('uploadForm');
             let form_data = new FormData(uploadForm);
+            let prop = "";
+            let self = this;
+            self.message = []
             
             fetch("/api/upload", {
                 method: 'POST',
@@ -75,12 +87,31 @@ const Upload = Vue.component('upload-form', {
             }).then(function (jsonResponse) {
                 // display a success message
                 console.log(jsonResponse);
+                for (res in jsonResponse) {
+                    prop = res;
+                }
+                if (prop == "errors") {
+                    self.error = true;
+                    for (msg in jsonResponse.errors) {
+                        self.message.push(jsonResponse.errors[msg]["message"]);
+                    }
+                } else {
+                    self.error = false;
+                    self.message.push(jsonResponse['message']);
+                }
              })
              .catch(function (error) {
                 console.log(error);
     });
         }
-    }
+    },
+    data: function () {
+        return {
+            flashMessage: false,
+            message: [],
+            error: false
+        }
+     }
 });
 
 // Define Routes
